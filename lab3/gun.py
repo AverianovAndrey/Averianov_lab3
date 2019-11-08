@@ -151,6 +151,7 @@ class target():
         self.id = canv.create_oval(0,0,0,0)
         self.id_points = canv.create_text(30,30,text = self.points,font = '28')
         self.new_target()
+        self.cont = 0
 
     def new_target(self):
         global a1,a2,a3
@@ -164,21 +165,20 @@ class target():
         color = self.color = 'red'
         canv.coords(self.id, x-r, y-r, x+r, y+r)
         canv.itemconfig(self.id, fill=color)
+        self.cont = 0
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
         canv.coords(self.id, -10, -10, -10, -10)
         self.points += points
         canv.itemconfig(self.id_points, text=self.points)
-    #def move_target(self):
-        #global a1,a2,a3
-        #color=self.color = 'white'
-        #canv.create_oval(a1-a3,a2-a3,a1+a3,a2+a3)
-        #a1=a1+rnd(1,10)
-        #a2=a2+rnd(1,10)
-        #color=self.color = 'red'
-        #canv.create_oval(a1-a3-1,a2-a3-1,a1+a3+1,a2+a3+1)
-        #root.after(1000, move_target)
+        self.cont = 1
+    def move_target(self):
+        if self.cont == 0:
+            x=self.x=self.x-1
+            y=self.y=self.y-1
+            r=self.r
+            canv.coords(self.id,x-r,y-r,x+r,y+r)
 
 
 t1 = target()
@@ -204,6 +204,7 @@ def new_game(event=''):
     t1.live = 1
     t2.live = 1
     while (t1.live and t2.live) or balls:
+        t1.move_target()
         for b in balls:
             b.move()
             if (b.hittest(t1) or b.hittest(t2)) and t1.live and t2.live:
